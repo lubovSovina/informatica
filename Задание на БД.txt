@@ -1,0 +1,54 @@
+Задание 1.
+a)  Создать таблицы для хранения информации об автомобилях, их владельце и таблицу их связи.
+b) Наполнить таблицы данными.
+c) Реализовать несколько запросов с использованием джоинов (например, информация о владельце автомобиля на определенную дату)
+d) Прислать указанные запросы (в т.ч. создание и наполнение данными)
+
+
+SQLiteStudio: https://sqlitestudio.pl/
+
+Запросы на создание таблиц:
+
+CREATE TABLE cars (
+    id        INTEGER   PRIMARY KEY AUTOINCREMENT
+                        UNIQUE
+                        NOT NULL,
+    number    TEXT (50) NOT NULL
+                        UNIQUE,
+    region    INTEGER   NOT NULL,
+    brand     TEXT (10),
+    color     TEXT (50),
+    insurance INTEGER   DEFAULT (0) 
+);
+CREATE TABLE owners (
+    id              INTEGER    PRIMARY KEY AUTOINCREMENT
+                               UNIQUE
+                               NOT NULL,
+    fullname        TEXT (100) NOT NULL,
+    passport        TEXT (20)  NOT NULL,
+    driving_licence TEXT (20) 
+);
+CREATE TABLE owners_of_cars (
+    id                INTEGER   PRIMARY KEY AUTOINCREMENT
+                                UNIQUE
+                                NOT NULL,
+    id_owner          INTEGER   REFERENCES owners (id) 
+                                NOT NULL,
+    id_car            INTEGER   REFERENCES cars (id) 
+                                NOT NULL,
+    registration_date TEXT (10) NOT NULL
+);
+
+Запросы на получение данных:
+
+информация о владельце на определённую дату по номеру машины
+
+SELECT owners.fullname, MAX(a.registration_date) 
+FROM (SELECT * FROM owners_of_cars WHERE registration_date < '2005.01.01') a
+JOIN owners ON owners.id == a.id_owner
+JOIN cars ON cars.id == a.id_car
+WHERE cars.number == 'к345рх';
+
+Ответ: Сидоров Сергей Олегович	2001.09.04
+
+
